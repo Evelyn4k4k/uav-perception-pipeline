@@ -191,6 +191,49 @@ final_candidate/metrics_best.json
 
 ---
 
+## Experimental Results Comparison
+
+The following table summarizes the performance of different monocular VO configurations tested on the **AMtown02** sequence.
+
+| Version | Configuration | ATE RMSE (m) | RPE Trans Drift (m/m) | RPE Rot Drift (deg/100m) | Completeness (%) | Notes |
+|---|---|---:|---:|---:|---:|---|
+| V1 | `KeyFrameTrajectory.txt` + original high-frequency GT | 54.397 | 2.316 | 74.015 | 5.09 | Only keyframes were evaluated, so completeness was severely underestimated. Not suitable as the final result. |
+| V2 | `CameraTrajectory.txt` + image-synchronized GT + old HK-style config | 53.946 | 2.077 | **67.043** | 98.68 | First valid full-frame evaluation result after fixing the GT synchronization issue. |
+| V3 | Official **AMtown** calibration + medium tuning | **52.988** | 2.067 | 67.079 | 98.79 | Best overall balance and lowest ATE among all tested settings. Recommended final candidate. |
+| V4 | Official **AMtown** calibration + aggressive ORB tuning | 118.237 | 2.111 | 92.059 | 98.76 | More aggressive feature extraction increased noise and degraded trajectory accuracy. |
+| V5 | Official **AMtown** calibration + 2× downsample + medium tuning | 117.771 | **1.899** | 83.185 | **98.93** | Downsampling slightly reduced translational drift but significantly worsened global trajectory accuracy. |
+
+## Discussion
+
+Several important observations can be drawn from the experiments:
+
+1. Using `KeyFrameTrajectory.txt` is not suitable for the final leaderboard evaluation, because it contains only sparse keyframes and leads to extremely low completeness.
+
+2. Synchronizing the ground truth with image timestamps is essential. After this correction, completeness increased from **5.09%** to **over 98%**, confirming that the evaluation pipeline became consistent with the image sequence.
+
+3. The official **AMtown** calibration provided a more reliable and better-matched configuration for AMtown02 than the earlier HK-style configuration.
+
+4. The **medium-strength ORB setting** provided the best overall result. It achieved the lowest ATE while maintaining high completeness.
+
+5. More aggressive ORB tuning did not improve performance. Although more features were extracted, the additional weak or noisy features likely introduced more unstable matches and increased global drift.
+
+6. **2× image downsampling** is not a good optimization direction for AMtown02. While translational drift was slightly reduced, the global trajectory accuracy became much worse, suggesting that this aerial sequence benefits from preserving original-resolution image details.
+
+## Recommended Final Configuration
+
+Based on the current experiments, the recommended final setting is:
+
+- **Official AMtown calibration**
+- **Original image resolution**
+- **Medium ORB tuning**
+
+This setting was selected because it achieved the lowest ATE RMSE while maintaining high completeness and stable overall drift performance across the tested configurations.
+
+- **ATE RMSE:** 52.988 m
+- **RPE Trans Drift:** 2.067 m/m
+- **RPE Rot Drift:** 67.079 deg/100m
+- **Completeness:** 98.79%
+
 ## Key Observations
 
 1. **Camera trajectory performed much better than keyframe-only trajectory** for final reporting.
