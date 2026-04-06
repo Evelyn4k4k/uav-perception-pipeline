@@ -1,0 +1,10 @@
+{
+  "group_name": "ChatGPT_spokesperson",
+  "project_private_repo_url": "https://github.com/Evelyn4k4k/AAE5303-ChatGPT_spokesperson-group-Project",
+  "metrics": {
+    "ate_rmse_m": 52.988,
+    "rpe_trans_drift_m_per_m": 2.067,
+    "rpe_rot_drift_deg_per_100m": 67.079,
+    "completeness_pct": 98.79
+  }
+}
